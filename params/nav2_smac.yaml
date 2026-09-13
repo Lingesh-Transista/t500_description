@@ -1,0 +1,162 @@
+amcl:
+  ros__parameters:
+    use_sim_time: true
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    global_frame_id: map
+    scan_topic: scan
+
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+
+
+map_server:
+  ros__parameters:
+    use_sim_time: true
+    # yaml_filename is supplied at launch time via the `map:=` argument
+    # (see launch/real_nav.launch.py) and overrides whatever is set here.
+    yaml_filename: shopfloor.yaml
+
+
+planner_server:
+  ros__parameters:
+    use_sim_time: true
+    expected_planner_frequency: 5.0
+
+    planner_plugins: ["GridBased"]
+
+    GridBased:
+      plugin: "nav2_smac_planner/SmacPlannerHybrid"
+
+      tolerance: 0.5
+      allow_unknown: true
+
+      downsample_costmap: false
+      downsampling_factor: 1
+
+      motion_model_for_search: "DUBIN"     # 🚫 FORWARD ONLY
+      angle_quantization_bins: 72
+      minimum_turning_radius: 0.35
+
+      reverse_penalty: 1000.0              # 🚫 HARD BLOCK REVERSE
+      change_penalty: 0.0
+      non_straight_penalty: 2.5             # smoother, no sharp turns
+      cost_penalty: 2.0
+      retrospective_penalty: 0.015
+
+
+controller_server:
+  ros__parameters:
+    use_sim_time: true
+    controller_frequency: 20.0
+
+    controller_plugins: ["FollowPath"]
+
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+
+      desired_linear_vel: 0.4
+
+      lookahead_dist: 0.6
+      min_lookahead_dist: 0.3
+      max_lookahead_dist: 0.9
+      use_velocity_scaled_lookahead_dist: true
+
+      allow_reversing: false          # 🚫 NO BACKWARD
+      rotate_to_heading: false        # 🚫 NO IN-PLACE ROTATION
+
+      max_angular_vel: 0.8            # limits turn severity
+      max_angular_accel: 1.5
+
+      transform_tolerance: 0.1
+
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: true
+    global_frame: map
+    robot_base_frame: base_footprint
+    odom_topic: odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+
+
+behavior_server:
+  ros__parameters:
+    use_sim_time: true
+
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: true
+
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: true
+
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: true
+
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: true
+      global_frame: odom
+      robot_base_frame: base_footprint
+      rolling_window: true
+
+      width: 3
+      height: 3
+      resolution: 0.05
+
+      plugins: ["obstacle_layer", "inflation_layer"]
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        observation_sources: scan
+        scan:
+          topic: scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.6
+        cost_scaling_factor: 3.0
+
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: true
+      global_frame: map
+      robot_base_frame: base_footprint
+      resolution: 0.05
+      track_unknown_space: true
+
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        observation_sources: scan
+        scan:
+          topic: scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.8
+        cost_scaling_factor: 3.0

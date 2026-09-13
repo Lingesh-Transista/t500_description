@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<robot name="t500" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find t500_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find t500_description)/urdf/t500.trans" />
+<xacro:include filename="$(find t500_description)/urdf/t500.gazebo" />
+<link name="base_footprint">
+  <inertial>
+    <origin xyz="-0.014391976478214046 0.002494035782161673 0.15841751119387604" rpy="0 0 0"/>
+    <mass value="41.9500881926306"/>
+    <inertia ixx="2.138621" iyy="4.599842" izz="6.082052" ixy="-0.00016" iyz="3.6e-05" ixz="-0.044564"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/base_footprint.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/base_footprint.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="base_link"/>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="right_wheel">
+  <inertial>
+    <origin xyz="2.7087748407685075e-07 0.019850434763655445 -1.753358988831888e-07" rpy="0 0 0"/>
+    <mass value="0.8308814407786927"/>
+    <inertia ixx="0.001" iyy="0.00167" izz="0.001" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.012329 0.316315 -0.06349" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/right_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="orange"/>
+  </visual>
+  <collision>
+    <origin xyz="0.012329 0.316315 -0.06349" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/right_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel">
+  <inertial>
+    <origin xyz="-2.7087745627096815e-07 -0.019850434763654334 -1.7539417170031602e-07" rpy="0 0 0"/>
+    <mass value="0.8308814407786927"/>
+    <inertia ixx="0.001" iyy="0.00167" izz="0.001" ixy="-0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.012671 -0.321315 -0.06349" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/left_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="orange"/>
+  </visual>
+  <collision>
+    <origin xyz="0.012671 -0.321315 -0.06349" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/left_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lidar">
+  <inertial>
+    <origin xyz="4.996003610813204e-16 1.214306433183765e-17 0.012153287763090215" rpy="0 0 0"/>
+    <mass value="0.2013033395239235"/>
+    <inertia ixx="0.000132" iyy="0.000132" izz="0.000245" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.45 -0.0025 -0.2965" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/lidar.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="light_black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.45 -0.0025 -0.2965" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find t500_description)/meshes/lidar.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="right_wheel_joint" type="continuous">
+  <origin xyz="-0.012329 -0.316315 0.06349" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="right_wheel"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="left_wheel_joint" type="continuous">
+  <origin xyz="-0.012671 0.321315 0.06349" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="left_wheel"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="Rigid 16" type="fixed">
+  <origin xyz="0.45 0.0025 0.2965" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="lidar"/>
+</joint>
+
+</robot>
